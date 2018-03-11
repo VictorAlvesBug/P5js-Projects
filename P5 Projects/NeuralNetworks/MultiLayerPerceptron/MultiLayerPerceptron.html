@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>MultiLayer Perceptron</title>
+	<meta charset='UTF-8'/>
+	<script src="../../../jquery-3.2.1.js"></script>
+	<script src="MultiLayerPerceptron.js"></script>
+</head>
+<body>
+	<textarea id="json" style="width:700px;height:500px"></textarea>
+
+	<script>
+		var training_sets = [
+			{ input: [0, 0], output: [0] },
+			{ input: [0, 1], output: [1] },
+			{ input: [1, 0], output: [1] },
+			{ input: [1, 1], output: [0] }
+			];
+
+			var layerSizes = [2, 2, 1];
+			var aFuncs = [ActivationFunction.None, ActivationFunction.RationalSigmoid, /*ActivationFunction.Sigmoid, */ActivationFunction.Linear];
+
+			var bpn = new MultiLayerPerceptron();
+			bpn.Init(layerSizes, aFuncs);
+			bpn.Train(training_sets, 100000);
+			bpn.ToJson("json");
+
+			console.log("0^0 = " + bpn.Run([0, 0]));
+			console.log("0^1 = " + bpn.Run([0, 1]));
+			console.log("1^0 = " + bpn.Run([1, 0]));
+			console.log("1^1 = " + bpn.Run([1, 1]));
+	</script>
+</body>
+</html>

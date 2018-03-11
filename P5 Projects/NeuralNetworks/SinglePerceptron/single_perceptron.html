@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Single Perceptron</title>
+	<meta charset='UTF-8'/>
+	<script src="SinglePerceptron.js"></script>
+	<script>
+		var training_sets = [
+			{ inputs: [0.02, 0.04], output: 0.06 },
+			{ inputs: [0.05, 0.02], output: 0.07 },
+			{ inputs: [0.06, 0.09], output: 0.15 },
+			{ inputs: [0.14, 0.25], output: 0.39 },
+			{ inputs: [0.24, 0.30], output: 0.54 },
+			{ inputs: [0.50, 0.10], output: 0.60 }
+			];
+
+			var neuron = new Perceptron();
+			neuron.init(0.15, 100000);
+			neuron.train(training_sets);
+
+			console.log(neuron.run([0.12, 0.19]));
+	</script>
+</head>
+<body>
+</body>
+</html>
