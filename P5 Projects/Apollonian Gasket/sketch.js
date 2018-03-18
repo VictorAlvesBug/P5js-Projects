@@ -1,72 +1,162 @@
-let balls = [];
+let circle = [];
+let calculatedPairs = [];
+let calculatedTrios = [];
+let keepRunningAdjacent;
+let keepRunningInternal;
+let initialIndexes = [];
+let ind = 0;
+let alternatingRole = "None";
+let minRadius = 2;
+
+let fractal = true;
+
+let firstRadius;
 
 function setup()
 {
 	createCanvas(600, 600);
+	translate(width/2, height/2);
+
+	firstRadius = width/2*0.9;
+
+	/// LIMIT CIRCLE (THE BIGGEST ONE)
+	addCircle(0, 0, firstRadius);
+
+	initialIndexes.push(0);
 }
 
 function draw()
 {
 	background(0);
-	translate(width/2, height/2)
+	translate(width/2, height/2);
 
-	noFill();
-	stroke(255);
+	//frameRate(2);
 
-	let size = width;
+	let circleCurrentLength;
 
-	ellipse(0, 0, size, size);
-
-	let newSize = size/2;
-
-	balls.push(new Ball(-size/4, 0, size/2));
-	balls.push(new Ball(size/4, 0, size/2));
-	let aaa=balls.length-1;
-
-	for(let i=aaa; i>=0; i--)
+	if(alternatingRole == "None")
 	{
-		for(let j=i-1; j>=0; j--)
+		alternatingRole = "Initial";
+		keepRunningAdjacent = true;
+		keepRunningInternal = true;
+	}
+	else if(alternatingRole == "Initial")
+	{
+		let mode = 8;
+
+		/// SETTING FIRST INTERNAL CIRCLES
+		setFirstCircles(mode);
+
+		alternatingRole = "Adjacent";
+		keepRunningAdjacent = true;
+		keepRunningInternal = true;
+	}
+	else if(alternatingRole == "Adjacent")
+	{
+		/// DRAWING ADJACENT CIRCLES (TOUCHING 2 INTERNAL CIRCLES AND THE EXTERNAL)
+		keepRunningAdjacent = false;
+		
+		circleCurrentLength = circle.length;
+
+		for(let i=initialIndexes[ind+1]; i<circleCurrentLength; i++)
 		{
-			let distance = dist(balls[i].pos.x, balls[i].pos.y, balls[j].pos.x, balls[j].pos.y);
-			let angle = atan2(balls[i].pos.y-balls[j].pos.y, balls[i].pos.x-balls[j].pos.x);
-			balls.push(new Ball((balls[i].pos.x+balls[j].pos.x)/2 + distance*cos(angle+PI/2), (balls[i].pos.y+balls[j].pos.y)/2 + distance*sin(angle+PI/2), (balls[i].size+balls[j].size)/2));
+			for(let j=i+1; j<circleCurrentLength; j++)
+			{
+				let diff1 = abs(myDist(circle[i], circle[j])-(circle[i].radius+circle[j].radius));
+				let diff2 = abs(myDist(circle[initialIndexes[ind]], circle[i])-(circle[initialIndexes[ind]].radius-circle[i].radius));
+				let diff3 = abs(myDist(circle[initialIndexes[ind]], circle[j])-(circle[initialIndexes[ind]].radius-circle[j].radius));
+
+				if(max([diff1, diff2, diff3]) < 1)
+				{
+					let alreadyCalculated = false;
+
+					for(let t=0; t<calculatedPairs.length; t++)
+					{
+						if(calculatedPairs[t].x == i &&
+						   calculatedPairs[t].y == j)
+						{
+							alreadyCalculated = true;
+							break;
+						}
+					}
+
+					if(!alreadyCalculated)
+					{
+						addAdjacentCircle([circle[initialIndexes[ind]], circle[i], circle[j]]);
+						calculatedPairs.push(createVector(i, j));
+					}
+				}
+
+			}
 		}
+
+		alternatingRole = "Internal";
+	}
+	else
+	{
+		/// DRAWING INTERNAL CIRCLES (BETWEEN 3 ALREADY EXISTENTS CIRCLES)
+		keepRunningInternal = false;
+
+		circleCurrentLength = circle.length;
+
+		for(let i=initialIndexes[ind+1]; i<circleCurrentLength; i++)
+		{
+			for(let j=i+1; j<circleCurrentLength; j++)
+			{
+				for(let k=j+1; k<circleCurrentLength; k++)
+				{
+					let diff1 = abs(myDist(circle[i], circle[j])-(circle[i].radius+circle[j].radius));
+					let diff2 = abs(myDist(circle[i], circle[k])-(circle[i].radius+circle[k].radius));
+					let diff3 = abs(myDist(circle[j], circle[k])-(circle[j].radius+circle[k].radius));
+
+					if(max([diff1, diff2, diff3]) < 1)
+					{
+						let alreadyCalculated = false;
+
+						for(let t=0; t<calculatedTrios.length; t++)
+						{
+							if(calculatedTrios[t].x == i &&
+							   calculatedTrios[t].y == j &&
+							   calculatedTrios[t].z == k)
+							{
+								alreadyCalculated = true;
+								break;
+							}
+						}
+
+						if(!alreadyCalculated)
+						{
+							addInternalCircle(circle[i], circle[j], circle[k]);
+							calculatedTrios.push(createVector(i, j, k));
+						}
+					}
+				}
+			}
+		}
+
+		alternatingRole = "Adjacent";
 	}
 
-	//drawEllipses(0, 0, 2);
-	/*ellipse(-size/4, 0, size/2, size/2);
-	ellipse(size/4, 0, size/2, size/2);
-	ellipse(0, -200, size/3, size/3);
-	ellipse(0, 200, size/3, size/3);*/
-
-	for(let i=0; i<balls.length; i++)
+	for(let i=0; i<circle.length; i++)
 	{
-		balls[i].show();
+		circle[i].show();
 	}
-}
 
-function drawEllipses(px, py, index)
-{
-	/// GERA LADO A LADO DE TAMANHO WIDTH/INDEX
-	/// A UMA DISTANCIA DE WIDTH/2 - (WIDTH/INDEX)/2
-
-	if(index<4)
+	if(!keepRunningAdjacent && !keepRunningInternal)
 	{
-		let size = width/index;
-		let distance = width/2 - size/2;
+		if(!fractal)
+		{
+			noLoop();
+		}
+		else
+		{
+			console.log("DONE !!!");
 
-		push();
-		translate(-distance, 0);
-		ellipse(0, 0, size, size);
-		rotate(PI/2);
-		drawEllipses(0, 0, index+1);
-		pop();
-
-		push();
-		translate(distance, 0);
-		ellipse(0, 0, size, size);
-		rotate(PI/2);
-		drawEllipses(0, 0, index+1);
-		pop();
+			alternatingRole = "Initial";
+			keepRunningAdjacent = true;
+			keepRunningInternal = true;
+			firstRadius = circle[initialIndexes[ind+1]].radius;
+			ind++;
+		}
 	}
 }
