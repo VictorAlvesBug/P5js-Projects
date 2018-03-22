@@ -9,18 +9,23 @@ let contClick = 0;
 let res = 20;
 let boolResult = false;
 let resultante;
+let item;
+let mouseClick.x
+let mouseClick.y
 let mode; //(AddForce, SetAngle, SetModulus)
 
 function setup()
 {
 	createCanvas(600, 600);
 
-	//apoio[0] = new Apoio(100, height-50, "Primeiro Genero");
-	//apoio[1] = new Apoio(500, height-50, "Segundo Genero");
+	//apoio[0] = new Apoio(100, height-50, "Fixo");
+	//apoio[1] = new Apoio(500, height-50, "Movel");
 	//barra[0] = new Barra(100, height-50, 500, height-50);
 	//forca[0] = new Forca(200, 200);
 
-	toolbar = new Toolbar(0, 0, 100, height);
+	///////////////toolbar = new Toolbar(0, 0, 100, height);
+
+	strItem = "Apoio Fixo";
 }
 
 /// ADICIONAR MODO PARA SETAR ANGULO ENTRE FORCAS
@@ -78,14 +83,52 @@ function draw()
 		anguloEntreForcas[i].show();
 	}
 
+	switch(strItem)
+	{
+		case "Apoio Fixo":
+			let item = new Apoio(mouseX, mouseY, "Fixo");
+		 break;
+
+		case "Apoio Movel":
+			let item = new Apoio(mouseX, mouseY, "Fixo");
+		 break;
+
+		case "Apoio Barra":
+			let item = new Barra(mouseX, mouseY, "Fixo");
+		 break;
+	}
+
 	if(boolResult)
 	{
 		resultante.show();
 	}
 
-	toolbar.show();
+	/*for (var i=0; i<toolbar.items.length; i++)
+		{
+			if(hover(createVector(mouseX, mouseY), toolbar.items[i]))
+			{
+				toolbar.items[i].hover = true;
+			}
+			else
+			{
+				toolbar.items[i].hover = false;
+			}
+
+			rect(10, 10+100*i, 80, 80);
+			this.items[i].draw();
+		}
+
+	toolbar.show();*/
 
 	contClick++;
+}
+
+function hover(mouse, item)
+{
+	return (mouse.x>item.x &&
+		    mouse.x<item.right &&
+		    mouse.y>item.y &&
+		    mouse.y<item.bottom);
 }
 
 function mouseClicked()
@@ -94,23 +137,29 @@ function mouseClicked()
 	{
 		boolResult = false;
 
-		if(newForca)
-		{
-			forca.push(new Forca(mouseX, mouseY, "Normal"));
-			newForca = false;
-		}else
-		{
-			newForca = true;
-			
-			if(forca.length >= 2)
+		/*if(mouseX > toolbar.Right)
+		{*/
+
+
+			if(newForca)
 			{
-				if(forca[forca.length-2].pos.x == forca[forca.length-1].pos.x &&
-					forca[forca.length-2].pos.y == forca[forca.length-1].pos.y)
+				forca.push(new Forca(mouseX, mouseY, "Normal"));
+				newForca = false;
+			}
+			else
+			{
+				newForca = true;
+				
+				if(forca.length >= 2)
 				{
-					anguloEntreForcas.push(new Angulo(forca[forca.length-2], forca[forca.length-1]));
+					if(forca[forca.length-2].pos.x == forca[forca.length-1].pos.x &&
+						forca[forca.length-2].pos.y == forca[forca.length-1].pos.y)
+					{
+						anguloEntreForcas.push(new Angulo(forca[forca.length-2], forca[forca.length-1]));
+					}
 				}
 			}
-		}
+		/*}*/
 		contClick = 0;
 	}
 }

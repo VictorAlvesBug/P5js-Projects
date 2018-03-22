@@ -1,6 +1,9 @@
 function Apoio (px, py, tipo)
 {
-	this.pos = createVector(px, py);
+	this.x = px;
+	this.y = py;
+	this.right = px + 40;
+	this.bottom = py + 40;
 	this.tipo = tipo;
 
 	this.draw = function ()
@@ -8,15 +11,15 @@ function Apoio (px, py, tipo)
 		stroke(255);
 		noFill();
 		push();
-		translate(this.pos.x, this.pos.y);
+		translate(this.x, this.y);
 		switch(this.tipo)
 		{
-			case "Primeiro Genero":
+			case "Movel":
 			triangle(0, 0, -20, 30, 20, 30);
 			line(-20, 40, 20, 40);
 			break;
 
-			case "Segundo Genero":
+			case "Fixo":
 			triangle(0, 0, -20, 30, 20, 30);
 			for (var i=-20; i<=20; i+=5)
 			{
