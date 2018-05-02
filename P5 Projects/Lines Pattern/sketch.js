@@ -4,13 +4,12 @@ let increment = 0.8;
 
 function setup()
 {
-	//FULLSCREEN
-	//createCanvas(windowWidth,windowHeight-10);
+	// FULLSCREEN
+	createCanvas(windowWidth,windowHeight-4);
 
-	//SQUARE THAT FITS IN MY SCREEN
-	createCanvas(700, 700);
-
-	//
+	// SQUARE THAT FITS IN MY SCREEN
+	//createCanvas(700, 700);
+	
 	for(let i=0; i<50; i++)
 	{
 		dot.push(new Dot());

@@ -5,8 +5,8 @@ class Dot
 		//random(5); --> IT WILL RANDOM A NUMBER BETWEEN 0 AND 5
 		//random(2, 9); --> IT WILL RANDOM A NUMBER BETWEEN 2 AND 9
 
-		this.x = random(width);
-		this.y = random(height);
+		this.x = random(windowWidth);
+		this.y = random(windowHeight);
 		this.angle = random(0, TWO_PI);
 	}
 
